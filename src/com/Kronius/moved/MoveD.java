@@ -1,6 +1,7 @@
 package com.Kronius.moved;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MoveD {
 
@@ -34,11 +35,39 @@ public class MoveD {
 				
 				//Get list of all files in the folder
 				
-				String[] fileList = srcDirectory.list();
-				
-				for(String fileName: fileList){
+				String[] directoryList = srcDirectory.list();
+//				ArrayList<String> fileList = new ArrayList<String>();
+//				
+				for(String fileName: directoryList){
 					System.out.println(fileName);
+					
+					File fileToMove = new File(srcDirectory + File.separator + fileName);
+					System.out.println(fileToMove.getPath());
+					File destFile = new File(dest + File.separator + fileToMove.getName());
+					System.out.println(destFile.getPath());
+					
+					if(fileToMove.renameTo(destFile)){
+						System.out.println("File was moved successfully!");
+					}else{
+						System.out.println("File failed to move!");
+					}
+//					
+//					if(!(new File(srcDirectory + fileName)).isDirectory()){//This Check Fails
+//						
+//						System.out.println("directoryList: " + fileName + " IS NOT a Directory" );
+//						
+//						fileList.add(fileName);
+//					}
+//					else{
+//						System.out.println("directoryList: " + fileName + " IS a Directory" );
+//					}
 				}
+//				
+//				System.out.println("-----------------------------------------------------------");
+//				
+//				for(String fileName: fileList){
+//					System.out.println("fileList: " + fileName);
+//				}
 				
 				//---------------------------------------------------------------------------------------------------------------------------------
 				
