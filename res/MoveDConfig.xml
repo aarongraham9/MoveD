@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MoveDConfig>
+	<Source>\media\PiDataDrive\Downloads\Done\</Source>
+	<Destination>\media\MediaDrive\Video\New\</Destination>
+	<RunningFlag>0</RunningFlag>
+	<DoneFlag>0</DoneFlag>
+</MoveDConfig>

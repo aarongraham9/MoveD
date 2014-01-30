@@ -1,11 +1,26 @@
 package com.Kronius.moved;
 
 import java.io.File;
-import java.util.ArrayList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+import com.Kronius.moved.BasicLogger;
+import com.Kronius.moved.MoveDConfig;
 
 public class MoveD {
 
 	private static final boolean DEBUG_MODE = true;
+	
+	private BasicLogger logger;
+	
+	private JAXBContext jc;
+	private Unmarshaller unmarshaller;
+    private File xml;
+    private MoveDConfig moveDConfig;
+    private Marshaller marshaller;
 	
 	private static String DEFAULT_SRC = File.separator + "media" + File.separator + "PiDataDrive" + File.separator + "Downloads" + File.separator + "Done" + File.separator;
 	private static String DEFAULT_DEST = File.separator + "media" + File.separator + "MediaDrive" + File.separator + "Video" + File.separator + "New" + File.separator;
@@ -18,11 +33,50 @@ public class MoveD {
 //		MoveD(DEFAULT_SRC, DEFAULT_DEST);
 //	}
 	
-	public MoveD(String srcIn, String destIn){
+	public MoveD(){
+		
+		String src = "";
+		String dest = "";
+		
+		try{
+			//Setup logging
+			logger = BasicLogger.getInstance();
+			logger.setLogName("MoveD.log");
+			
+			//XML Parsing
+			jc = JAXBContext.newInstance(MoveDConfig.class);
+	        unmarshaller = jc.createUnmarshaller();
+	        xml = new File("res" + File.separator + "MoveDConfig.xml");
+	        moveDConfig = (MoveDConfig) unmarshaller.unmarshal(xml);
+	        
+			src = moveDConfig.getSource();
+			dest = moveDConfig.getDestination();
+			
+			src = src.replace("\\", File.separator);
+			src = src.replace("/", File.separator);
+			dest = dest.replace("\\", File.separator);
+			dest = dest.replace("/", File.separator);
+			
+			marshaller = jc.createMarshaller();
+	        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+	        //marshaller.marshal(moveDConfig, System.out);
+			
+			MoveDConstructor(src, dest);
+	
+		}catch(JAXBException JAXBe){
+			src = DEFAULT_SRC;
+			dest = DEFAULT_DEST;
+			System.out.println(JAXBe.getStackTrace().toString());
+		}
+	}
+	
+	public void overrideXMLPaths(String srcIn, String destIn){
+		MoveDConstructor(srcIn, destIn);
+	}
+	
+	private void MoveDConstructor(String srcIn, String destIn){
 		src = srcIn;
 		dest = destIn;
-		//TODO: Setup logging
-		//TODO: XML Parsing
 	}
 	
 	public void move(){
@@ -89,12 +143,15 @@ public class MoveD {
 	}
 	
 	public static void main(String[] args){
-		MoveD moveD;
 		
-		//TODO: Remove Test Paths
-		String srcIn = "C:\\Users\\CASA\\moved\\testdir\\" + DEFAULT_SRC;
-		String destIn = "C:\\Users\\CASA\\moved\\testdir\\" + DEFAULT_DEST;	
-		moveD = new MoveD(srcIn, destIn);
+		MoveD moveD;
+		moveD = new MoveD();
+		
+		if(DEBUG_MODE){
+			String srcIn = "C:\\Users\\CASA\\moved\\testdir\\" + DEFAULT_SRC;
+			String destIn = "C:\\Users\\CASA\\moved\\testdir\\" + DEFAULT_DEST;	
+			moveD.overrideXMLPaths(srcIn, destIn);
+		}
 		
 		moveD.move();
 	}
