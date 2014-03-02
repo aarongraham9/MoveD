@@ -12,7 +12,9 @@ import com.Kronius.moved.MoveDConfig;
 
 public class MoveD {
 
-	private static final boolean DEBUG_MODE = true;
+	private static final boolean DEBUG_MODE = false;
+	
+	private static String CLASS_NAME;
 	
 	private BasicLogger logger;
 	
@@ -34,7 +36,7 @@ public class MoveD {
 //	}
 	
 	public MoveD(){
-		
+		//logger.log(CLASS_NAME, "Init");
 		String src = "";
 		String dest = "";
 		
@@ -51,6 +53,7 @@ public class MoveD {
 	        
 			src = moveDConfig.getSource();
 			dest = moveDConfig.getDestination();
+			//logger.log(CLASS_NAME, "JAXB src and dest loaded successfully");
 			
 			src = src.replace("\\", File.separator);
 			src = src.replace("/", File.separator);
@@ -61,12 +64,14 @@ public class MoveD {
 	        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 	        //marshaller.marshal(moveDConfig, System.out);
 			
+	        //logger.log(CLASS_NAME, "src: " + src + " dest: " + dest);
 			MoveDConstructor(src, dest);
 	
 		}catch(JAXBException JAXBe){
 			src = DEFAULT_SRC;
 			dest = DEFAULT_DEST;
-			System.out.println(JAXBe.getStackTrace().toString());
+			//System.out.println(JAXBe.getStackTrace().toString());
+			//logger.log(CLASS_NAME, "JAXB Exception: " + JAXBe.getStackTrace().toString() + "\n\nsrc: " + src + " dest: " + dest);
 		}
 	}
 	
@@ -90,48 +95,26 @@ public class MoveD {
 				//Get list of all files in the folder
 				
 				String[] directoryList = srcDirectory.list();
-//				ArrayList<String> fileList = new ArrayList<String>();
-//				
+				
 				for(String fileName: directoryList){
-					System.out.println(fileName);
+					//System.out.println(fileName);
+					//logger.log(CLASS_NAME, fileName);
 					
 					File fileToMove = new File(srcDirectory + File.separator + fileName);
-					System.out.println(fileToMove.getPath());
+					//System.out.println(fileToMove.getPath());
+					//logger.log(CLASS_NAME, fileToMove.getPath());
 					File destFile = new File(dest + File.separator + fileToMove.getName());
-					System.out.println(destFile.getPath());
+					//System.out.println(destFile.getPath());
+					//logger.log(CLASS_NAME, destFile.getPath());
 					
 					if(fileToMove.renameTo(destFile)){
-						System.out.println("File was moved successfully!");
+						//System.out.println("File was moved successfully!");
+						//logger.log(CLASS_NAME, "File was moved successfully!");
 					}else{
-						System.out.println("File failed to move!");
+						//System.out.println("File failed to move!");
+						//logger.log(CLASS_NAME, "File failed to move!");
 					}
-//					
-//					if(!(new File(srcDirectory + fileName)).isDirectory()){//This Check Fails
-//						
-//						System.out.println("directoryList: " + fileName + " IS NOT a Directory" );
-//						
-//						fileList.add(fileName);
-//					}
-//					else{
-//						System.out.println("directoryList: " + fileName + " IS a Directory" );
-//					}
 				}
-//				
-//				System.out.println("-----------------------------------------------------------");
-//				
-//				for(String fileName: fileList){
-//					System.out.println("fileList: " + fileName);
-//				}
-				
-				//---------------------------------------------------------------------------------------------------------------------------------
-				
-				
-			 
-//				if(srcDirectory.renameTo(new File(dest + srcDirectory.getName()))){
-//					System.out.println("File is moved successful!");
-//				}else{
-//					System.out.println("File is failed to move!");
-//				}
 			 
 	    	}catch(Exception e){
 	    		e.printStackTrace();
@@ -143,6 +126,8 @@ public class MoveD {
 	}
 	
 	public static void main(String[] args){
+		
+		CLASS_NAME = MoveD.class.getName();
 		
 		MoveD moveD;
 		moveD = new MoveD();
